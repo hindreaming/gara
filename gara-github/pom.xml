@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.eyegil.gara</groupId>
+        <artifactId>gara-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>gara-github</artifactId>
+    <name>gara-github</name>
+    <description>GitHub access for Gara: repository scanning, provisioning and the shared commit throttle</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.eyegil.gara</groupId>
+            <artifactId>gara-coordination</artifactId>
+        </dependency>        <dependency>
+            <groupId>com.eyegil.integration</groupId>
+            <artifactId>github-client</artifactId>
+        </dependency>    </dependencies>
+
+</project>

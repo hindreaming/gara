@@ -1,0 +1,72 @@
+spring:
+  config:
+    # KEY=value pairs (no quotes) from a .env file in the working directory, if present
+    import: optional:file:.env[.properties]
+  application:
+    name: gara
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  datasource:
+    url: jdbc:postgresql://${GARA_DB_HOST:localhost}:${GARA_DB_PORT:5432}/${GARA_DB_NAME:gara}
+    username: ${GARA_DB_USER:gara}
+    password: ${GARA_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+  web:
+    resources:
+      add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 101MB
+
+server:
+  shutdown: graceful
+  tomcat:
+    max-swallow-size: 101MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: never
+
+github:
+  token: ${GITHUB_TOKEN:}
+
+gara:
+  auth:
+    username: ${GARA_USERNAME:}
+    password: ${GARA_PASSWORD:}
+  volume:
+    max-size: 1GB
+    fill-threshold: 0.9
+    max-files: 50000
+    min-active: 2
+    max-active: 3
+    nearly-full: 0.8
+    pool-check-interval: PT5M
+    lease-timeout: 60s
+  object:
+    max-size: 100MB
+    multipart-expiry: 7d
+    multipart-cleanup-cron: "0 30 3 * * *"
+  github:
+    owner: ${GITHUB_OWNER:}
+    branch: ${GITHUB_BRANCH:main}
+    writes-per-hour: 450
+    write-burst: 20
+    throttle-wait: 60s
+    write-retries: 3
+    retry-backoff: 2s
+  lease:
+    ttl: 2m
+    renew-interval: PT30S
+    poll-interval: 100ms

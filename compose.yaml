@@ -1,0 +1,20 @@
+# Local Postgres for Gara: database and user "gara", password from GARA_DB_PASSWORD (required).
+# Set GARA_DB_PORT (e.g. 5433) if another Postgres already uses 5432.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: gara
+      POSTGRES_USER: gara
+      POSTGRES_PASSWORD: ${GARA_DB_PASSWORD:?Set GARA_DB_PASSWORD}
+    ports:
+      - "${GARA_DB_PORT:-5432}:5432"
+    volumes:
+      - gara-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gara -d gara"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  gara-postgres:

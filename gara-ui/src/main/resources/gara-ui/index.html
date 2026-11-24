@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gara Console</title>
+    <link rel="icon" href="brand/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="brand/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+    <link rel="manifest" href="brand/site.webmanifest" crossorigin="use-credentials">
+    <meta name="theme-color" content="#081c42">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <img class="brand-mark" src="brand/android-chrome-192x192.png" alt="">
+            <span class="brand-text">GARA<small>Object Store</small></span>
+        </div>
+        <nav class="menu">
+            <span class="menu-section">User</span>
+            <a href="#/browser" data-view="browser">
+                <svg viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/></svg>Object Browser
+            </a>
+            <span class="menu-section">Administrator</span>
+            <a href="#/buckets" data-view="buckets">
+                <svg viewBox="0 0 24 24"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3v12c0 1.7-3.6 3-8 3s-8-1.3-8-3zM4 6c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Buckets
+            </a>
+            <a href="#/volumes" data-view="volumes">
+                <svg viewBox="0 0 24 24"><path d="M3 4h18v6H3zM3 14h18v6H3zM7 7h.01M7 17h.01"/></svg>Volumes
+            </a>
+            <a href="#/monitoring" data-view="monitoring">
+                <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Monitoring
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <span id="health-badge" class="pill">loading…</span>
+            <span id="updated-at" class="sidebar-muted"></span>
+        </div>
+    </aside>
+
+    <main class="content">
+        <header class="page-header">
+            <h1 id="page-title">Object Browser</h1>
+        </header>
+
+        <aside class="notice" role="note">
+            <strong>Gara is just a fun project</strong>, made for fun, learning and experimenting; it is not a
+            production-grade storage service. It keeps files in GitHub repositories, so use it responsibly: excessive
+            bulk uploads or large-scale hosting can break GitHub's Terms of Service and get the account rate-limited or
+            suspended. Keep it to modest, personal, non-commercial use. There are no guarantees, so keep your own backups.
+        </aside>
+
+        <!-- Object Browser: bucket list, then one folder level at a time -->
+        <section id="view-browser" class="view">
+            <div class="toolbar">
+                <nav id="breadcrumb" class="breadcrumb"></nav>
+                <div class="toolbar-actions">
+                    <button id="refresh-objects" class="button secondary">Refresh</button>
+                    <label id="upload-button" class="button primary">
+                        Upload<input id="upload-input" type="file" multiple hidden>
+                    </label>
+                </div>
+            </div>
+            <div class="panel">
+                <table>
+                    <thead id="browser-head"></thead>
+                    <tbody id="browser-rows"></tbody>
+                </table>
+            </div>
+            <p id="browser-note" class="note"></p>
+        </section>
+
+        <!-- Buckets -->
+        <section id="view-buckets" class="view" hidden>
+            <div class="toolbar">
+                <span class="muted">Buckets are stored in Postgres; each one writes to its own GitHub repositories.</span>
+                <div class="toolbar-actions">
+                    <button id="create-bucket-toggle" class="button primary">Create Bucket +</button>
+                </div>
+            </div>
+            <form id="bucket-form" class="panel form" hidden>
+                <h2>Create Bucket</h2>
+                <label>Bucket name <input name="name" required placeholder="assets"></label>
+                <label>Repository <input name="repository" required placeholder="my-asset-archive"></label>
+                <label>Folder <input name="directory" placeholder="empty for the repository root"></label>
+                <label class="check"><input type="checkbox" name="createRepository"> Create the repository on GitHub</label>
+                <label class="check"><input type="checkbox" name="publicRepos"> Public repositories (anyone can read the files)</label>
+                <div class="form-actions">
+                    <button type="button" id="create-bucket-cancel" class="button secondary">Cancel</button>
+                    <button type="submit" class="button primary">Create Bucket</button>
+                </div>
+            </form>
+            <div class="panel">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th><th>First repository</th><th>Folder</th><th>Access</th><th>Objects</th>
+                        <th>Size</th><th>Active volumes</th><th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="bucket-rows"></tbody>
+                </table>
+            </div>
+            <p id="bucket-note" class="note"></p>
+        </section>
+
+        <!-- Volumes -->
+        <section id="view-volumes" class="view" hidden>
+            <div class="toolbar">
+                <span class="muted">One GitHub repository each. Written bytes include git history, which is what fills a repository.</span>
+            </div>
+            <div class="panel">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Repository</th><th>Bucket</th><th>Status</th><th>Written</th><th>Usage</th>
+                        <th>Files at head</th><th>Activity</th>
+                    </tr>
+                    </thead>
+                    <tbody id="volume-rows"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Monitoring -->
+        <section id="view-monitoring" class="view" hidden>
+            <div class="stats">
+                <article class="stat">
+                    <span class="stat-label">Status</span>
+                    <span id="stat-health" class="stat-value">–</span>
+                </article>
+                <article class="stat">
+                    <span class="stat-label">GitHub commits available now</span>
+                    <span class="stat-value"><span id="stat-budget">–</span><small> / <span id="stat-burst">–</span></small></span>
+                    <span class="stat-hint"><span id="stat-rate">–</span> per hour, shared by all instances</span>
+                </article>
+                <article class="stat">
+                    <span class="stat-label">Multipart uploads in progress</span>
+                    <span id="stat-multipart" class="stat-value">–</span>
+                </article>
+                <article class="stat">
+                    <span class="stat-label">Database</span>
+                    <span id="stat-database" class="stat-hint"></span>
+                </article>
+            </div>
+            <div class="panel">
+                <h2>Health checks</h2>
+                <table>
+                    <thead><tr><th>Check</th><th>Status</th></tr></thead>
+                    <tbody id="health-rows"></tbody>
+                </table>
+            </div>
+            <div class="panel">
+                <h2>Leases <span class="muted">held by any instance</span></h2>
+                <table>
+                    <thead><tr><th>Name</th><th>Owner</th><th>Expires</th></tr></thead>
+                    <tbody id="lease-rows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

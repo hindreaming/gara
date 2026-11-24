@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gara Sandbox</title>
+    <link rel="icon" href="brand/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="brand/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+    <link rel="manifest" href="brand/site.webmanifest">
+    <meta name="theme-color" content="#081c42">
+    <link rel="stylesheet" href="sandbox.css">
+</head>
+<body>
+<header class="topbar">
+    <img class="brand-mark" src="brand/android-chrome-192x192.png" alt="">
+    <span class="brand-text">GARA <small>Sandbox</small></span>
+</header>
+
+<main class="page">
+    <img class="wordmark" src="brand/wordmark.png" alt="Gara">
+    <h1>Try Gara</h1>
+    <p class="lead">
+        Drop a file and Gara stores it in a public GitHub repository, the same way it stores objects sent through its
+        S3 API. You get a public link to the file and to the repository.
+    </p>
+
+    <aside class="notice" role="note">
+        <p>
+            <strong>Uploads here are public and permanent.</strong> Anyone can see them, and they stay in the
+            repository's git history even after deletion. Do not upload anything private, sensitive or illegal.
+        </p>
+        <p>
+            Gara is just a fun project, made for fun, learning and experimenting; it is not a production-grade storage
+            service. Please use it responsibly: it keeps files in GitHub repositories, and bulk uploading breaks
+            GitHub's Terms of Service. No guarantees. The daily limits are shared by every visitor and reset at
+            midnight UTC.
+        </p>
+    </aside>
+
+    <label id="drop-zone" class="drop-zone">
+        <input id="file-input" type="file" multiple hidden>
+        <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/></svg>
+        <strong>Drag and drop files here</strong>
+        <span>or click to choose</span>
+    </label>
+
+    <section class="quota">
+        <div>
+            <span class="quota-label">Uploads today</span>
+            <span id="quota-uploads">–</span>
+            <span class="bar"><span id="quota-uploads-bar"></span></span>
+        </div>
+        <div>
+            <span class="quota-label">Space today</span>
+            <span id="quota-bytes">–</span>
+            <span class="bar"><span id="quota-bytes-bar"></span></span>
+        </div>
+        <p id="quota-note" class="quota-note"></p>
+    </section>
+
+    <p id="message" class="message" hidden></p>
+
+    <ul id="results" class="results"></ul>
+
+</main>
+
+<script src="sandbox.js"></script>
+</body>
+</html>

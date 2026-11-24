@@ -1,0 +1,60 @@
+name: Publish
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PUBLIC_REPOSITORY: hindreaming/gara
+
+jobs:
+  mirror:
+    if: github.repository == 'eyegil/gara'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Pushes below must use the mirror token, not this workflow's own token
+          persist-credentials: false
+
+      - name: Push the ref to the public repository
+        env:
+          TOKEN: ${{ secrets.PUBLIC_MIRROR_TOKEN }}
+        run: |
+          git push --force "https://x-access-token:${TOKEN}@github.com/${PUBLIC_REPOSITORY}.git" "${GITHUB_SHA}:${GITHUB_REF}"
+
+  release:
+    if: github.repository == 'eyegil/gara' && startsWith(github.ref, 'refs/tags/v')
+    needs: mirror
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build and test
+        run: ./mvnw -B clean install
+
+      - name: Create the release on the public repository
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_MIRROR_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            gara-app/target/gara-exec.jar \
+            gara-sandbox/target/gara-sandbox.jar \
+            --repo "${PUBLIC_REPOSITORY}" \
+            --verify-tag \
+            --title "Gara ${GITHUB_REF_NAME}" \
+            --generate-notes

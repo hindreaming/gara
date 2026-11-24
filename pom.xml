@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         child.project.url.inherit.append.path="false">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.eyegil</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <groupId>com.eyegil.gara</groupId>
+    <artifactId>gara-parent</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>gara-parent</name>
+    <description>Git Asset Repository Archive: an S3-compatible object store backed by GitHub repositories</description>
+    <url>https://github.com/hindreaming/gara</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm child.scm.connection.inherit.append.path="false"
+         child.scm.developerConnection.inherit.append.path="false"
+         child.scm.url.inherit.append.path="false">
+        <connection>scm:git:https://github.com/hindreaming/gara.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/hindreaming/gara.git</developerConnection>
+        <url>https://github.com/hindreaming/gara</url>
+    </scm>
+
+    <modules>
+        <module>gara-security</module>
+        <module>gara-coordination</module>
+        <module>gara-github</module>
+        <module>gara-catalog</module>
+        <module>gara-s3</module>
+        <module>gara-admin</module>
+        <module>gara-ui</module>
+        <module>gara-app</module>
+        <module>gara-sandbox</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring.boot.version>3.5.10</spring.boot.version>
+        <eyegil.version>1.0</eyegil.version>
+        <awssdk.version>2.33.0</awssdk.version>
+        <embedded-postgres.version>2.1.0</embedded-postgres.version>
+        <embedded-postgres-binaries.version>17.5.0</embedded-postgres-binaries.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-coordination</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-github</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-catalog</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-s3</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-admin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.gara</groupId>
+                <artifactId>gara-app</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.eyegil.integration</groupId>
+                <artifactId>github-client</artifactId>
+                <version>${eyegil.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zonky.test</groupId>
+                <artifactId>embedded-postgres</artifactId>
+                <version>${embedded-postgres.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <!-- Postgres server binaries for tests: same major version as production -->
+                <groupId>io.zonky.test.postgres</groupId>
+                <artifactId>embedded-postgres-binaries-bom</artifactId>
+                <version>${embedded-postgres-binaries.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <developers>
+        <developer>
+            <id>hindreaming</id>
+            <name>Hindreaming</name>
+            <email>hindreaming@gmail.com</email>
+            <timezone>GMT+7</timezone>
+            <roles>
+                <role>Project Lead</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <release>${java.version}</release>
+                    <!-- Spring MVC binds @PathVariable/@RequestParam by parameter name -->
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
